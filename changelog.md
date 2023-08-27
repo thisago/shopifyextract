@@ -4,3 +4,4 @@
 
 - Init
 - Added product extraction
+- Added sitemap products url extraction
