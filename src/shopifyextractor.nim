@@ -10,6 +10,8 @@ import pkg/unifetch
 
 import shopifyextractor/product
 export product
+import shopifyextractor/types
+export types
 
 proc fetchSitemap(url: Uri or string): Future[XmlNode] {.async.} =
   let

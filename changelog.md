@@ -1,5 +1,9 @@
 # Changelog
 
+## Version 0.1.1 (2023/08/27)
+
+- Exported types
+
 ## Version 0.1.0 (2023/08/25)
 
 - Init
