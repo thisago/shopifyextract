@@ -18,7 +18,13 @@ proc extractShopifyProduct*(url: string): Future[ShopifyProduct] {.async.} =
 
   let
     html = parseHtml resp.body
-    json = parseJson html.querySelector("script[data-product-json]").innerText
+    scriptTag = html.querySelector("script[data-product-json]")
+
+  if scriptTag.isNil:
+    return
+
+  let
+    json = parseJson scriptTag.innerText
     product = json{"product"}
 
   new result
@@ -30,4 +36,8 @@ proc extractShopifyProduct*(url: string): Future[ShopifyProduct] {.async.} =
     result.images.add "https:" & media{"src"}.getStr
 
 when isMainModule:
-  echo waitFor(extractShopifyProduct "https://lojaprecohonesto.com.br/products/camisa-sao-paulo-away-2023")[]
+  let product = waitFor extractShopifyProduct "https://lojaprecohonesto.com.br/"
+  if not product.isNil:
+    echo product[]
+  else:
+    echo "nil"

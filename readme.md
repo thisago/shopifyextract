@@ -20,7 +20,11 @@ Just provide a product URL, it will return a `ShopifyProduct` object
 
 **Usage**
 ```nim
-let data = newShopifyExtractor()
+let products = getAllShopifyProductUrls "https://arandomshopify.shop"
+
+for productUrl in products:
+  let product = extractShopifyProduct productUrl
+  echo product[]
 ```
 
 ## License

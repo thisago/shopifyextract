@@ -2,14 +2,12 @@ import std/asyncdispatch
 from std/uri import parseUri, `$`
 from std/htmlparser import parseHtml
 from std/strutils import contains
-# from std/xmltree import XmlNode, innerText, xnElement
-import std/xmltree 
+from std/xmltree import XmlNode, innerText, child
 
 import pkg/nimquery
 
 import pkg/unifetch
 
-import shopifyextractor/types
 import shopifyextractor/product
 export product
 
@@ -20,7 +18,7 @@ proc fetchSitemap(url: Uri or string): Future[XmlNode] {.async.} =
   close uni
   result = parseHtml resp.body
 
-proc getAllProducts(url: string): Future[seq[string]] {.async.} =
+proc getAllShopifyProductUrls*(url: string): Future[seq[string]] {.async.} =
   ## Returns all products of a Shopify ecommerce
   var smUrl = parseUri url
   smUrl.path = "sitemap.xml"
@@ -30,7 +28,9 @@ proc getAllProducts(url: string): Future[seq[string]] {.async.} =
     let smSmUrl = sitemap.child("loc").innerText
     if "products" in smSmUrl:
       for url in (await fetchSitemap smSmUrl).querySelectorAll "url":
-        result.add url.child("loc").innerText
+        let productUrl = parseUri url.child("loc").innerText
+        if productUrl.path.len > 5 and "product" in productUrl.path:
+          result.add $productUrl
   
 when isMainModule:
-  echo len waitFor getAllProducts "https://lojaprecohonesto.com.br/products/camisa-sao-paulo-away-2023"
+  echo waitFor getAllShopifyProductUrls "https://lojaprecohonesto.com.br/products/camisa-sao-paulo-away-2023"
